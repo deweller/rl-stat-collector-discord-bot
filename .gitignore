@@ -1,0 +1,7 @@
+.env
+*.env
+credentials
+data
+node_modules
+
+/dev*.js
