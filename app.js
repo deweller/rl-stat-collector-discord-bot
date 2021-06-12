@@ -1,14 +1,22 @@
 const Discord = require('discord.js');
 require('dotenv').config();
+const figlet = require('figlet');
+
 const bot = require('./lib/bot')
 const logger = require('./lib/logger')
-
+const nameMatcher = require('./lib/nameMatcher')
 
 
 const client = new Discord.Client();
 client.login(process.env.BOT_TOKEN)
 client.on('ready', async () => {
-    logger.debug('Bot is ready');
+    logger.debug('Discord bot is ready');
+
+    // load the names
+    await nameMatcher.refreshNamesList()
+
+    // ready
+    console.log(figlet.textSync('OF Stats Bot Ready!'))
 
     config = {
         mainGuild: null,
