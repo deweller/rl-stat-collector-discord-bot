@@ -5,6 +5,7 @@ const figlet = require('figlet');
 const bot = require('./lib/bot')
 const logger = require('./lib/logger')
 const nameMatcher = require('./lib/nameMatcher')
+const spreadsheetHandler = require('./lib/spreadsheetHandler')
 
 
 const client = new Discord.Client();
@@ -15,12 +16,16 @@ client.on('ready', async () => {
     // load the names
     await nameMatcher.refreshNamesList()
 
+    // load the settings
+    const settings = await spreadsheetHandler.loadSettings()
+
     // ready
     console.log(figlet.textSync('OF Stats Bot Ready!'))
 
     config = {
         mainGuild: null,
         mainChannel: null,
+        settings: settings,
     }
     // get the guild
     config.guild = await client.guilds.fetch(process.env.DISCORD_SERVER_ID);
