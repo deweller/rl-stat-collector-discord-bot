@@ -1,7 +1,9 @@
-.env
+.env*
 *.env
 credentials
 data
 node_modules
 
 /dev*.js
+
+ecosystem.config.js

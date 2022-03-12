@@ -9,7 +9,7 @@ const nameMatcher = require('./lib/nameMatcher')
 const scheduleStore = require('./lib/scheduleStore')
 const spreadsheetHandler = require('./lib/spreadsheetHandler')
 
-const client = new Discord.Client();
+const client = new Discord.Client({retryLimit: Infinity});
 client.login(process.env.BOT_TOKEN)
 client.on('ready', async () => {
     // load the player names
