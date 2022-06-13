@@ -7,17 +7,19 @@ const cache = require('./lib/cache')
 const logger = require('./lib/logger')
 const nameMatcher = require('./lib/nameMatcher')
 const scheduleStore = require('./lib/scheduleStore')
+const gameStatusStore = require('./lib/gameStatusStore')
 const spreadsheetHandler = require('./lib/spreadsheetHandler')
 
 const client = new Discord.Client({retryLimit: Infinity});
 client.login(process.env.BOT_TOKEN)
 client.on('ready', async () => {
     // load the player names
-    const [allPlayersData, allTeamNamesList, allTeamsByGameIdMap, scheduleByWeek] = await cache.resolveCache(process.env.CACHE_PLAYERS, 'players', async function() {
-        return await spreadsheetHandler.loadPlayersTeamsAndSchedule()
+    const [allPlayersData, allTeamNamesList, allTeamsByGameIdMap, scheduleByWeek, gameSubmissionStatus] = await cache.resolveCache(process.env.CACHE_PLAYERS, 'players', async function() {
+        return await spreadsheetHandler.loadSpreadsheetData()
     })
     nameMatcher.refreshPlayersAndTeamsList(allPlayersData, allTeamNamesList, allTeamsByGameIdMap)
     scheduleStore.refreshScheduleByWeek(scheduleByWeek)
+    gameStatusStore.refreshGameStatus(gameSubmissionStatus)
 
     // load the settings
     const settings = await cache.resolveCache(process.env.CACHE_SETTINGS, 'settings', async function() {
