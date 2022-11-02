@@ -10,7 +10,10 @@ const scheduleStore = require('./lib/scheduleStore')
 const gameStatusStore = require('./lib/gameStatusStore')
 const spreadsheetHandler = require('./lib/spreadsheetHandler')
 
-const client = new Discord.Client({retryLimit: Infinity});
+const client = new Discord.Client({
+    intents: [32768], // MESSAGE_CONTENT
+    retryLimit: Infinity
+});
 client.login(process.env.BOT_TOKEN)
 client.on('ready', async () => {
     // load the player names
