@@ -8,6 +8,7 @@ const logger = require('./lib/logger')
 const nameMatcher = require('./lib/nameMatcher')
 const scheduleStore = require('./lib/scheduleStore')
 const gameStatusStore = require('./lib/gameStatusStore')
+const nameLookups = require('./lib/nameLookups')
 const spreadsheetHandler = require('./lib/spreadsheetHandler')
 
 const client = new Discord.Client({
@@ -17,12 +18,13 @@ const client = new Discord.Client({
 client.login(process.env.BOT_TOKEN)
 client.on('ready', async () => {
     // load the player names
-    const [allPlayersData, allTeamNamesList, allTeamsByGameIdMap, scheduleByWeek, gameSubmissionStatus] = await cache.resolveCache(process.env.CACHE_PLAYERS, 'players', async function() {
+    const spreadsheetData = await cache.resolveCache(process.env.CACHE_PLAYERS, 'players', async function() {
         return await spreadsheetHandler.loadSpreadsheetData()
     })
-    nameMatcher.refreshPlayersAndTeamsList(allPlayersData, allTeamNamesList, allTeamsByGameIdMap)
-    scheduleStore.refreshScheduleByWeek(scheduleByWeek)
-    gameStatusStore.refreshGameStatus(gameSubmissionStatus)
+    nameMatcher.refreshPlayersAndTeamsList(spreadsheetData)
+    scheduleStore.refreshScheduleByWeek(spreadsheetData.scheduleByWeek)
+    gameStatusStore.refreshGameStatus(spreadsheetData.gameSubmissionStatus)
+    nameLookups.setSpreadsheetData(spreadsheetData)
 
     // load the settings
     const settings = await cache.resolveCache(process.env.CACHE_SETTINGS, 'settings', async function() {
@@ -47,7 +49,7 @@ client.on('ready', async () => {
     }
 
     // ready
-    console.log(figlet.textSync('OF Stats Bot 2.0'))
+    console.log(figlet.textSync('OF Stats Bot 2.1', {font: 'Big'}))
     console.log('is connected and ready.')
 
     bot.run(client, config)
